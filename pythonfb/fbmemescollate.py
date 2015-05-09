@@ -41,6 +41,8 @@ def build_data_structure(post_data):
 	data['hd_img_url']=post_data['link']
 	data['post_id']=post_data['id']
 	data['share_count']=post_data['shares']['count']
+	data['category']='unassigned'
+	data['tags']=[" "]
 	print data
 	return data
 

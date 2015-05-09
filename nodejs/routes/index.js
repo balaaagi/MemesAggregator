@@ -30,20 +30,22 @@ exports.linklist=function(db){
 
 exports.showmemes=function(db){
     return function(req,res){
-        db.collection('posts').find({ tags: " "}).toArray(function(e,docs){
+        //db.collection('posts').find({$where:"(this.category.length == 1)"}).toArray(function(e,docs){
+          db.collection('posts').find({category:"unassigned"}).toArray(function(e,docs){  
             if(!e){
                 db.collection('categories').find().toArray(function(err,d){
                     
                         var memesData = {};
                         memesData.memes = docs || [];
                         memesData.categories = d || [];
-                        console.log(memesData);
+                        console.log(memesData)
                        res.render('showmemes',{ 
                         showmemes:memesData
+
                         
                     });
                 });
-
+{$where:"tags.length < 5"}
             }else{
                 console.log(e);
                 res.send("Failed! Please check Console errors");
@@ -53,6 +55,8 @@ exports.showmemes=function(db){
         });
     }
 }
+
+
 
 exports.newuser=function(req,res){
 	res.render('newuser',{title: 'New User'});
@@ -89,6 +93,39 @@ exports.addcategory=function(db){
                 res.redirect("showcategory");
             }
         });
+    }
+}
+
+exports.modifymeme=function(db){
+    return function(req,res){
+        console.log("comgin");
+        //var memestitle=req.body.title;
+        var tags=[];
+        console.log(req.body.deletepost);
+        tags=req.body.tags.split(",");
+        var category=req.body.memescategory;
+        var id=req.body.id;
+        //console.log(memestitle);
+        console.log(tags);
+        console.log(category);
+        console.log(id);
+
+        db.collection('posts').update({
+            "post_id":id},{$set:{
+            "tags":tags,
+            "category":category}
+
+        },function(err,doc){
+            if(err){
+                res.send("There was some problem during insertions of linkes");
+            }
+           else{
+                res.location("/showmemes");
+                res.redirect("showmemes");
+           } 
+        });
+
+
     }
 }
 

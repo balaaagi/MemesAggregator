@@ -44,8 +44,10 @@ app.post('/addlink',routes.addlink(db));
 app.get('/showtags',routes.showtags(db));
 app.get('/showmemes',routes.showmemes(db));
 app.get('/newcategory',routes.newcategory);
+app.post('/modifymeme',routes.modifymeme(db))
 app.post('/addcategory',routes.addcategory(db))
 app.get('/showcategory',routes.showcategory(db))
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
