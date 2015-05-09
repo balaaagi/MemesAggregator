@@ -1,0 +1,25 @@
+extends layout
+
+block content
+	h1.
+		Memes  Which Need Tag
+	p
+		a(href="/") Home
+	ul
+		each memes,i in showmemes.memes
+			p
+				h2.
+					#{memes.post_message}
+				img(src=memes.memes_url)
+				form#formModifyMemes(name="addlink" method="post",action="/addlink")
+				input#memeTitle(type="text", placeholder="MemeTitle",name="title",size="150")
+				input#id(type="hidden",name="id",value=memes.post_id)
+				br
+				input#memesTags(type="text", placeholder="tag separate by commas",name="tags", size="100")
+				br
+				select(name='memesCategories')
+					each category, i in showmemes.categories
+						option(value=category.category_name)  #{category.category_name}
+				br
+				button#btnSubmit(type="submit") submit
+				

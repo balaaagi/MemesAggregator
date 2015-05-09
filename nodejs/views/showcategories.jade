@@ -1,0 +1,14 @@
+extends layout
+
+block content
+	h1.
+		Link List
+	p
+		a(href="/") Home
+	ul
+		each category,i in showcategories
+			p
+				h2.
+					#{category.category_name}
+			
+

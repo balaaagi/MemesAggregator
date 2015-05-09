@@ -1,0 +1,10 @@
+extends layout
+
+block content
+	h1.
+		Link List
+	ul
+		each link,i in linklist
+			li
+				a(href="#{link.link}")=link.link
+

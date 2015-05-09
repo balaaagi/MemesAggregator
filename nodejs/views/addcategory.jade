@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1= title
+  p
+        a(href="/") Home
+  form#formAddCategory(name="addlink" method="post",action="/addcategory")
+    input#inputUsername(type="text", placeholder="New Category name",name="newcategory",size="150")
+    br
+    button#btnSubmit(type="submit") Add  

@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1= title
+  p
+        a(href="/") Home
+  form#formAddUser(name="addlink" method="post",action="/addlink")
+    input#inputUsername(type="text", placeholder="URL",name="link",size="150")
+    br
+    input#inputemail(type="text", placeholder="tag separate by commas",name="tags", size="100")
+    br
+    button#btnSubmit(type="submit") submit  
