@@ -35,10 +35,10 @@ def extract_hq_img_link(post_link):
 def checkpostexists(post_id):
 	return db.poststatistics.find({"post_id":post_id}).count()
 
-def build_data_structure_newpost(post_data):
+def build_data_structure(post_data):
 	
 	# len(post_data['message'])
-
+	datastructure={}
 	data['post_message']=post_data['message']
 	data['memes_url']=post_data['picture']
 	data['hd_img_url']=post_data['link']
@@ -50,9 +50,13 @@ def build_data_structure_newpost(post_data):
 	stats['memes_share_count']=post_data['shares']['count']
 	stats['memes_views_count']=0
 	stats['memes_likes_count']=0
+	datastructure['data']=data 
+	datastructure['stats']=stats
+	# print data
+	return datastructure
 
-	print data
-	return data
+
+
 
 
 
@@ -93,18 +97,23 @@ json_fbposts = json_postdata['data']
 
 
 for post in json_fbposts:
-	if(post['type']=='photo'):
+	if post['type']=='photo':
 		data={}
 		stats={}
 		post_url=create_single_post_url(graph_url+post['id'],APP_ID,APP_SECRET)
 		post_data=render_to_json(post_url)
-		# if(checkpostexists(post['id']==0):
-		# 	db.posts.insert(build_data_structure(post_data)) 
-		# else:
-		print build_data_structure_newpost(post_data)
+		posts_data=build_data_structure(post_data)
+		if checkpostexists(post['id'])==0:
+			db.posts.insert(posts_data['data'])
+			db.poststatistics.insert(posts_data['stats']) 
+		else:
+			db.posts.update({"post_id":post[id]},{'$set':{"share_count":post_data['shares']['count']}})
+			db.poststatistics.update({"post_id":post[id]},{'$set':{"memes_share_count":post_data['shares']['count']}})
+			
 		
 		
-		db.posts.insert(build_data_structure_newpost(post_data)) 
+		
+		# db.posts.insert(build_data_structure_newpost(post_data)) 
 			
 		
 		# print build_data_structure(post_data)

@@ -12,9 +12,10 @@ var path = require('path');
 //var mongo=require('mongodb');
 var mongo=require('mongoskin');
 //var db=monk('localhost:27017/mylinks');
-var db=mongo.db("mongodb://localhost:27017/memesaggregate",{native_parser:true});
+var db=mongo.db("mongodb://labs.balaaagi.me:27017/memesaggregate",{native_parser:true});
 
 var app = express();
+var category;
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -49,6 +50,36 @@ app.post('/addcategory',routes.addcategory(db))
 app.get('/showcategory',routes.showcategory(db))
 app.get('/sampleapi',routes.sampleapi(db))
 
+// app.post('/collections/put/', function(req, res) {
+//   //var heartbeat=req.params.heartObject;
+//   console.log(heartObject);
+
+//   db.collection('hotspots').insert({"heartbeat":req.body.heartbeat},{},function(err,docs){if(err){
+//                 res.send("There was some problem during insertions of linkes");
+//             }
+//            else{
+//                 res.send("Fail");
+//                 //res.redirect("linklist");
+//            } });
+
+// });
+
+app.get('/memes/category/:category', function(req, res, next) {
+	category=req.params.category.valueOf();
+	console.log(category);
+		  db.collection('posts').find({"category":category}).toArray(function(e,docs){
+          
+                if (!e){
+                        console.log("docs retrieved");
+                 res.send(docs);
+                }else{
+                        res.send("Fail");
+                }
+
+
+                });
+
+});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
