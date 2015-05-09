@@ -45,7 +45,7 @@ exports.showmemes=function(db){
                         
                     });
                 });
-{$where:"tags.length < 5"}
+
             }else{
                 console.log(e);
                 res.send("Failed! Please check Console errors");
@@ -101,15 +101,32 @@ exports.modifymeme=function(db){
         console.log("comgin");
         //var memestitle=req.body.title;
         var tags=[];
+        var deletepost=req.body.deletepost;
+        var id=req.body.id;
         console.log(req.body.deletepost);
+        if(deletepost=="on"){
+                db.collection('posts').remove({
+                    "post_id":id},function(err,doc){
+                        if(err){
+                            res.send("There was some problem during insertions of linkes");
+                        }
+                        else{
+                            res.location("/showmemes");
+                            res.redirect("showmemes");
+                        } 
+                    }
+
+                );
+        }else{
         tags=req.body.tags.split(",");
         var category=req.body.memescategory;
-        var id=req.body.id;
+        
         //console.log(memestitle);
         console.log(tags);
         console.log(category);
         console.log(id);
-
+        if(tags.length==0)
+            category='unassigned';
         db.collection('posts').update({
             "post_id":id},{$set:{
             "tags":tags,
@@ -124,6 +141,7 @@ exports.modifymeme=function(db){
                 res.redirect("showmemes");
            } 
         });
+    }
 
 
     }
