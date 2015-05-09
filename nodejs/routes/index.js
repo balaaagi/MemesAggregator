@@ -38,7 +38,7 @@ exports.showmemes=function(db){
                         var memesData = {};
                         memesData.memes = docs || [];
                         memesData.categories = d || [];
-                        console.log(memesData)
+                        
                        res.render('showmemes',{ 
                         showmemes:memesData
 
@@ -185,10 +185,10 @@ exports.addlink=function(db){
 
 exports.sampleapi=function(db){
     return function(req,res){
-        db.collection('posts').find().toArray(function(e,docs){
+        db.collection('posts').find().limit(50).toArray(function(e,docs){
             var memes={};
             if(!e){
-                db.collection('poststatistics').find().toArray(function(err,doc){
+                db.collection('poststatistics').find().limit(50).toArray(function(err,doc){
                     if(!err){
                         memes.posts=docs || [];
                         memes.stats=doc || [];
