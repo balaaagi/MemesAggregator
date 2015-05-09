@@ -2,6 +2,8 @@ import facebook
 import requests
 import urllib2
 import json
+import pymongo
+from pymongo import MongoClient
 
 def render_to_json(graph_url):
     #render graph url call to JSON
@@ -39,6 +41,7 @@ def build_data_structure(post_data):
 	data['hd_img_url']=post_data['link']
 	data['post_id']=post_data['id']
 	data['share_count']=post_data['shares']['count']
+	print data
 	return data
 
 
@@ -52,6 +55,12 @@ APP_ID =configs[1]
 
 memes_pages=['kaatupoochi007']
 graph_url="https://graph.facebook.com/"
+
+
+# MongoDB Connection
+client=MongoClient('localhost', 27017)
+# Connecting to DataBase
+db=client.memesaggregate
 
 
 current_memes_page=graph_url + 'kaatupoochi007'
@@ -78,6 +87,7 @@ for post in json_fbposts:
 		data={}
 		post_url=create_single_post_url(graph_url+post['id'],APP_ID,APP_SECRET)
 		post_data=render_to_json(post_url)
-		print build_data_structure(post_data)
+		# print build_data_structure(post_data)
+		db.posts.insert(build_data_structure(post_data)) 
 		# extract_hq_img_link(post_data['link'])
 
