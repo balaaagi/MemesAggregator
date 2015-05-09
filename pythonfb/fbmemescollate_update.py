@@ -32,7 +32,10 @@ def extract_hq_img_link(post_link):
 	page=urllib2.urlopen(post_link)
 	page_source=page.read()
 
-def build_data_structure(post_data):
+def checkpostexists(post_id):
+	return db.poststatistics.find({"post_id":post_id}).count()
+
+def build_data_structure_newpost(post_data):
 	
 	# len(post_data['message'])
 
@@ -43,8 +46,11 @@ def build_data_structure(post_data):
 	data['share_count']=post_data['shares']['count']
 	data['category']='unassigned'
 	data['tags']=[" "]
-	data['memes_views_count']=0
-	data['memes_likes_count']=0
+	stats['post_id']=post_data['id']
+	stats['memes_share_count']=post_data['shares']['count']
+	stats['memes_views_count']=0
+	stats['memes_likes_count']=0
+
 	print data
 	return data
 
@@ -73,8 +79,8 @@ json_memes_page=render_to_json(current_memes_page)
 page_data = (json_memes_page["id"], json_memes_page["likes"],
                      json_memes_page["talking_about_count"],
                      json_memes_page["username"])
-print page_data
-print('-----------')
+# print page_data
+# print('-----------')
 
 #extract post data
 post_url = create_post_url(current_memes_page, APP_ID, APP_SECRET)
@@ -89,9 +95,20 @@ json_fbposts = json_postdata['data']
 for post in json_fbposts:
 	if(post['type']=='photo'):
 		data={}
+		stats={}
 		post_url=create_single_post_url(graph_url+post['id'],APP_ID,APP_SECRET)
 		post_data=render_to_json(post_url)
+		# if(checkpostexists(post['id']==0):
+		# 	db.posts.insert(build_data_structure(post_data)) 
+		# else:
+		print build_data_structure_newpost(post_data)
+		
+		
+		db.posts.insert(build_data_structure_newpost(post_data)) 
+			
+		
 		# print build_data_structure(post_data)
-		db.posts.insert(build_data_structure(post_data)) 
+
+		
 		# extract_hq_img_link(post_data['link'])
 

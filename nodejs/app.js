@@ -47,6 +47,7 @@ app.get('/newcategory',routes.newcategory);
 app.post('/modifymeme',routes.modifymeme(db))
 app.post('/addcategory',routes.addcategory(db))
 app.get('/showcategory',routes.showcategory(db))
+app.get('/sampleapi',routes.sampleapi(db))
 
 
 http.createServer(app).listen(app.get('port'), function(){

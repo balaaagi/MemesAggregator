@@ -181,6 +181,17 @@ exports.addlink=function(db){
     }
 }
 
+exports.sampleapi=function(db){
+    return function(req,res){
+        db.collection('posts').find().toArray(function(e,docs){
+            var memes={};
+            memes.posts=docs || [];
+            // res.send(docs);
+            res.send(memes);
+        });
+    }
+}
+
 exports.adduser = function(db) {
     return function(req, res) {
 
