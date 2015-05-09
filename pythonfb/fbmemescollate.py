@@ -30,6 +30,16 @@ def extract_hq_img_link(post_link):
 	page=urllib2.urlopen(post_link)
 	page_source=page.read()
 
+def build_data_structure(post_data):
+	
+	# len(post_data['message'])
+
+	data['post_message']=post_data['message']
+	data['memes_url']=post_data['picture']
+	data['hd_img_url']=post_data['link']
+	data['post_id']=post_data['id']
+	data['share_count']=post_data['shares']['count']
+	return data
 
 
 
@@ -65,8 +75,9 @@ json_fbposts = json_postdata['data']
 
 for post in json_fbposts:
 	if(post['type']=='photo'):
+		data={}
 		post_url=create_single_post_url(graph_url+post['id'],APP_ID,APP_SECRET)
 		post_data=render_to_json(post_url)
-		print post_data
+		print build_data_structure(post_data)
 		# extract_hq_img_link(post_data['link'])
 
