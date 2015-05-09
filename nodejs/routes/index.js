@@ -96,10 +96,11 @@ exports.addcategory=function(db){
     }
 }
 
+
+
 exports.modifymeme=function(db){
     return function(req,res){
         console.log("comgin");
-        //var memestitle=req.body.title;
         var tags=[];
         var deletepost=req.body.deletepost;
         var id=req.body.id;
@@ -120,7 +121,7 @@ exports.modifymeme=function(db){
         }else{
         tags=req.body.tags.split(",");
         var category=req.body.memescategory;
-        
+        var memestitle=req.body.title;
         //console.log(memestitle);
         console.log(tags);
         console.log(category);
@@ -130,7 +131,8 @@ exports.modifymeme=function(db){
         db.collection('posts').update({
             "post_id":id},{$set:{
             "tags":tags,
-            "category":category}
+            "category":category,
+            "title":memestitle}
 
         },function(err,doc){
             if(err){
@@ -185,12 +187,24 @@ exports.sampleapi=function(db){
     return function(req,res){
         db.collection('posts').find().toArray(function(e,docs){
             var memes={};
-            memes.posts=docs || [];
+            if(!e){
+                db.collection('poststatistics').find().toArray(function(err,doc){
+                    if(!err){
+                        memes.posts=docs || [];
+                        memes.stats=doc || [];
+                        res.send(memes);
+                    }
+
+                });
+
+            }
+            
             // res.send(docs);
-            res.send(memes);
+            
         });
     }
 }
+
 
 exports.adduser = function(db) {
     return function(req, res) {

@@ -81,6 +81,16 @@ app.get('/memes/category/:category', function(req, res, next) {
 
 });
 
+app.get('/categories',function(req,res,next){
+	db.collection("categories").find().toArray(function(e,docs){
+		if(!e){
+			res.send(docs);
+		}else{
+			res.send("Fail");
+		}
+	});
+});
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });

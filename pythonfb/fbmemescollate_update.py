@@ -46,6 +46,8 @@ def build_data_structure(post_data):
 	data['share_count']=post_data['shares']['count']
 	data['category']='unassigned'
 	data['tags']=[" "]
+	data['title']=" "
+	data["source"]=page_name
 	stats['post_id']=post_data['id']
 	stats['memes_share_count']=post_data['shares']['count']
 	stats['memes_views_count']=0
@@ -76,7 +78,7 @@ client=MongoClient('localhost', 27017)
 # Connecting to DataBase
 db=client.memesaggregate
 
-
+page_name='kaatupoochi007'
 current_memes_page=graph_url + 'kaatupoochi007'
 
 json_memes_page=render_to_json(current_memes_page)
@@ -103,12 +105,13 @@ for post in json_fbposts:
 		post_url=create_single_post_url(graph_url+post['id'],APP_ID,APP_SECRET)
 		post_data=render_to_json(post_url)
 		posts_data=build_data_structure(post_data)
+		print post['updated_time']
 		if checkpostexists(post['id'])==0:
 			db.posts.insert(posts_data['data'])
-			db.poststatistics.insert(posts_data['stats']) 
+			db.poststatistics.insert(posts_data['stats'])
 		else:
-			db.posts.update({"post_id":post[id]},{'$set':{"share_count":post_data['shares']['count']}})
-			db.poststatistics.update({"post_id":post[id]},{'$set':{"memes_share_count":post_data['shares']['count']}})
+			db.posts.update({"post_id":post['id']},{'$set':{'share_count':post_data['shares']['count']}})
+			db.poststatistics.update({"post_id":post['id']},{'$set':{'memes_share_count':post_data['shares']['count']}})
 			
 		
 		
