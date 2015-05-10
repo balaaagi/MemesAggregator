@@ -152,8 +152,10 @@ app.get('/categories',function(req,res,next){
 
 app.get('/trending',function(req,res,next){
 	db.collection("posts").find({"memes_share_count":{$gt: 150}}).toArray(function(e,docs){
+		var memes={};
 		if(!e){
-			res.send(docs);
+			memes.posts=docs||[];
+			res.send(memes);
 			// var trendingposts={};
 			// for(x in docs){
 			// 	console.log(docs[x].post_id)

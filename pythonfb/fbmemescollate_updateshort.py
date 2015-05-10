@@ -80,17 +80,17 @@ APP_SECRET =configs[0]
 APP_ID =configs[1]
 
 
-memes_pages=['kaatupoochi007']
+memes_pages=['kaatupoochi007','hackathontrolls']
 graph_url="https://graph.facebook.com/"
 
 
 # MongoDB Connection
-client=MongoClient('localhost', 27017)
+client=MongoClient('labs.balaaagi.me', 27017)
 # Connecting to DataBase
 db=client.memesaggregate
 
 page_name='hackathontrolls'
-current_memes_page=graph_url + 'hackathontrolls'
+current_memes_page=graph_url + page_name
 
 json_memes_page=render_to_json(current_memes_page)
 page_data = (json_memes_page["id"], json_memes_page["likes"],

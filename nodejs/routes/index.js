@@ -112,12 +112,25 @@ exports.modifymeme=function(db){
                             res.send("There was some problem during insertions of linkes");
                         }
                         else{
+                            db.collection('poststatistics').remove({
+                            "post_id":id},function(err,doc){
+                            if(err){
+                                res.send("There was some problem during insertions of linkes");
+                            }
+                            else{
+                            
                             res.location("/showmemes");
                             res.redirect("showmemes");
+                            } 
+                            }
+
+                            );
+                            
                         } 
                     }
 
                 );
+
         }else{
         tags=req.body.tags.split(",");
         var category=req.body.memescategory;
