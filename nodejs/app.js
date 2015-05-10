@@ -151,7 +151,7 @@ app.get('/categories',function(req,res,next){
 });
 
 app.get('/trending',function(req,res,next){
-	db.collection("posts").find({"memes_share_count":{$gt: 150}}).toArray(function(e,docs){
+	db.collection("posts").find({"memes_share_count":{$gt: 100}}).toArray(function(e,docs){
 		var memes={};
 		if(!e){
 			memes.posts=docs || [];
