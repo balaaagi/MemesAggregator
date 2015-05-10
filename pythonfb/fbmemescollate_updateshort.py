@@ -89,7 +89,7 @@ client=MongoClient('labs.balaaagi.me', 27017)
 # Connecting to DataBase
 db=client.memesaggregate
 
-page_name='hackathontrolls'
+page_name='kaatupoochi007'
 current_memes_page=graph_url + page_name
 
 json_memes_page=render_to_json(current_memes_page)

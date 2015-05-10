@@ -154,19 +154,9 @@ app.get('/trending',function(req,res,next){
 	db.collection("posts").find({"memes_share_count":{$gt: 150}}).toArray(function(e,docs){
 		var memes={};
 		if(!e){
-			memes.posts=docs||[];
+			memes.posts=docs || [];
 			res.send(memes);
-			// var trendingposts={};
-			// for(x in docs){
-			// 	console.log(docs[x].post_id)
-			// 	db.collection("posts").find({"post_id":docs[x].post_id}).toArray(function(err,d){
-			// 		if(!err){
-			// 			console.log(d);
-			// 			trendingposts=trendingposts+d;
-			// 		}
-			// 	});
-			// }
-			// res.send(trendingposts);
+			
 				
 			
 
