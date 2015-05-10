@@ -95,11 +95,11 @@ app.get('/memes/stats/likes/:post_id', function(req, res, next) {
 	console.log(stat_type);
 			db.collection('poststatistics').update({"post_id":post_id},{$inc:{"memes_likes_count":1}},function(err,doc){
 					if(err){
-                		res.send("There was some problem during insertions of linkes");
+                		res.send("{success:0}");
             		}
 		           else{
 		                
-		                res.send("success");
+		                res.send("{success:1}");
 		           } 
 					});
 
@@ -113,11 +113,11 @@ app.get('/memes/stats/views/:post_id', function(req, res, next) {
 	console.log(stat_type);
 			db.collection('poststatistics').update({"post_id":post_id},{$inc:{"memes_views_count":1}},function(err,doc){
 					if(err){
-                		res.send("There was some problem during insertions of linkes");
+                		res.send("{success:0}");
             		}
 		           else{
 		                
-		                res.send("success");
+		                res.send("{success:1}");
 		           } 
 					});
 
@@ -130,15 +130,16 @@ app.get('/memes/stats/shares/:post_id', function(req, res, next) {
 	console.log(stat_type);
 			db.collection('poststatistics').update({"post_id":post_id},{$inc:{"memes_share_count":1}},function(err,doc){
 					if(err){
-                		res.send("There was some problem during insertions of linkes");
+                		res.send("{success:0}");
             		}
 		           else{
 		                
-		                res.send("success");
+		                res.send("{success:1}");
 		           } 
 					});
 
 });
+
 app.get('/categories',function(req,res,next){
 	db.collection("categories").find().toArray(function(e,docs){
 		if(!e){
@@ -148,6 +149,20 @@ app.get('/categories',function(req,res,next){
 		}
 	});
 });
+
+app.get('/trending',function(req,res,next){
+	db.collection("poststatistics").find({"memes_share_count":{$gt: 150}},{post_id:true,_id:false}).toArray(function(e,docs){
+		if(!e){
+			for d in docs{
+				console.log(d.post_id)
+			}
+
+		}else{
+			res.send("Fail");
+		}
+	});
+});
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

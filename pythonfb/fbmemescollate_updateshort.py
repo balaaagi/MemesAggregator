@@ -15,7 +15,7 @@ def render_to_json(graph_url):
 
 def create_post_url(graph_url, APP_ID, APP_SECRET): 
     #create authenticated post URL
-    post_args = "/posts/?fields=id,created_time,updated_time,type&limit=100&key=value&access_token=" + APP_ID + "|" + APP_SECRET
+    post_args = "/posts/?fields=id,created_time,updated_time,type&limit=10&key=value&access_token=" + APP_ID + "|" + APP_SECRET
     post_url = graph_url + post_args
  
     return post_url
@@ -122,27 +122,29 @@ json_postdata = render_to_json(post_url)
 
 
 json_fbposts = json_postdata['data']
-complete_posts=[]
-count=0;
-while(True):
-    try:
-        for post in json_postdata['data']:
-        	count=count+1
-        	complete_posts.append(post)
+# complete_posts=[]
+# count=0;
+# while(True):
+#     try:
+#         for post in json_postdata['data']:
+#         	count=count+1
+#         	complete_posts.append(post)
         	
-        if(count>30):
-        	break
+#         if(count>30):
+#         	break
         	
-        # Attempt to make a request to the next page of data, if it exists.
-        json_postdata=requests.get(json_postdata['paging']['next']).json()
-    except KeyError:
-        # When there are no more pages (['paging']['next']), break from the
-        # loop and end the script.
-        break
+#         # Attempt to make a request to the next page of data, if it exists.
+#         json_postdata=requests.get(json_postdata['paging']['next']).json()
+#     except KeyError:
+#         # When there are no more pages (['paging']['next']), break from the
+#         # loop and end the script.
+#         break
 
 # print complete_posts
-
-for post in complete_posts:
+latest_post_time=json_fbposts[0]['updated_time']
+latest_post_time=latest_post_time[0:latest_post_time.index('+')]
+latest_post_time=latest_post_time.replace('T',' ')
+for post in json_fbposts:
 	if post['type']=='photo':
 		data={}
 		stats={}
@@ -150,10 +152,11 @@ for post in complete_posts:
 		post_data=render_to_json(post_url)
 		print post['id']
 		posts_data=build_data_structure(post_data)
-		print post['updated_time']
+		print latest_post_time
 		if checkpostexists(post['id'])==0:
 			db.posts.insert(posts_data['data'])
 			db.poststatistics.insert(posts_data['stats'])
+			db.postutility.insert({"page_name":page_name,"latest_meme_time":latest_post_time});
 		else:
 			db.posts.update({"post_id":post['id']},{'$set':{'share_count':post_data['shares']['count']}})
 			db.poststatistics.update({"post_id":post['id']},{'$set':{'memes_share_count':post_data['shares']['count']}})
