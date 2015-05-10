@@ -100,7 +100,7 @@ graph_url="https://graph.facebook.com/"
 
 
 # MongoDB Connection
-client=MongoClient('labs.balaaagi.me', 27017)
+client=MongoClient('localhost', 27017)
 # Connecting to DataBase
 db=client.memesaggregate
 
@@ -124,12 +124,15 @@ json_postdata = render_to_json(post_url)
 json_fbposts = json_postdata['data']
 complete_posts=[]
 count=0;
-while(count<30):
+while(True):
     try:
         for post in json_postdata['data']:
+        	count=count+1
         	complete_posts.append(post)
-        count=+1
-
+        	
+        if(count>30):
+        	break
+        	
         # Attempt to make a request to the next page of data, if it exists.
         json_postdata=requests.get(json_postdata['paging']['next']).json()
     except KeyError:
