@@ -93,7 +93,7 @@ app.get('/memes/stats/likes/:post_id', function(req, res, next) {
 
 	console.log(post_id);
 	console.log(stat_type);
-			db.collection('poststatistics').update({"post_id":post_id},{$inc:{"memes_likes_count":1}},function(err,doc){
+			db.collection('posts').update({"post_id":post_id},{$inc:{"memes_likes_count":1}},function(err,doc){
 					if(err){
                 		res.send("{success:0}");
             		}
@@ -111,7 +111,7 @@ app.get('/memes/stats/views/:post_id', function(req, res, next) {
 
 	console.log(post_id);
 	console.log(stat_type);
-			db.collection('poststatistics').update({"post_id":post_id},{$inc:{"memes_views_count":1}},function(err,doc){
+			db.collection('posts').update({"post_id":post_id},{$inc:{"memes_views_count":1}},function(err,doc){
 					if(err){
                 		res.send("{success:0}");
             		}
@@ -128,7 +128,7 @@ app.get('/memes/stats/shares/:post_id', function(req, res, next) {
 
 	console.log(post_id);
 	console.log(stat_type);
-			db.collection('poststatistics').update({"post_id":post_id},{$inc:{"memes_share_count":1}},function(err,doc){
+			db.collection('posts').update({"post_id":post_id},{$inc:{"memes_share_count":1}},function(err,doc){
 					if(err){
                 		res.send("{success:0}");
             		}
@@ -151,11 +151,20 @@ app.get('/categories',function(req,res,next){
 });
 
 app.get('/trending',function(req,res,next){
-	db.collection("poststatistics").find({"memes_share_count":{$gt: 150}},{post_id:true,_id:false}).toArray(function(e,docs){
+	db.collection("posts").find({"memes_share_count":{$gt: 150}}).toArray(function(e,docs){
 		if(!e){
-			for(x in docs){
-				console.log(x.post_id)
-			}
+			res.send(docs);
+			// var trendingposts={};
+			// for(x in docs){
+			// 	console.log(docs[x].post_id)
+			// 	db.collection("posts").find({"post_id":docs[x].post_id}).toArray(function(err,d){
+			// 		if(!err){
+			// 			console.log(d);
+			// 			trendingposts=trendingposts+d;
+			// 		}
+			// 	});
+			// }
+			// res.send(trendingposts);
 				
 			
 
