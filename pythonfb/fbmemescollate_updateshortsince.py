@@ -13,11 +13,11 @@ def render_to_json(graph_url):
     
     return json_data
 
-def create_post_url(graph_url, APP_ID, APP_SECRET): 
+def create_post_url(graph_url, APP_ID, APP_SECRET,since_date): 
     #create authenticated post URL
-    post_args = "/posts/?fields=id,created_time,updated_time,type&limit=10&key=value&access_token=" + APP_ID + "|" + APP_SECRET
+    post_args = "/posts/?fields=id,created_time,updated_time,type&limit=10&since="+ str(since_date) +"&key=value&access_token=" + APP_ID + "|" + APP_SECRET
     post_url = graph_url + post_args
- 
+    print post_url
     return post_url
 
 def create_single_post_url(graph_url,APP_ID,APP_SECRET):
@@ -31,6 +31,8 @@ def extract_config():
 
 def checkpostexists(post_id):
 	return db.poststatistics.find({"post_id":post_id}).count()
+def extractTime(page_name):
+	return db.postutility.find({"page_name":page_name},{"_id":False,"latest_meme_time":True})
 
 def build_data_structure(post_data):
 	
@@ -80,7 +82,7 @@ APP_SECRET =configs[0]
 APP_ID =configs[1]
 
 
-memes_pages=['kaatupoochi007','hackathontrolls','TrollFootballTamil','OfficialTrollBollywood','tctv1','memeschennai','TamilTroll']
+memes_pages=['kaatupoochi007']
 graph_url="https://graph.facebook.com/"
 
 
@@ -89,8 +91,8 @@ client=MongoClient('labs.balaaagi.me', 27017)
 # Connecting to DataBase
 db=client.memesaggregate
 
-page_name='kaatupoochi007'
-current_memes_page=graph_url + page_name
+page_name='memeschennai'
+current_memes_page=graph_url + 'memeschennai'
 
 json_memes_page=render_to_json(current_memes_page)
 page_data = (json_memes_page["id"], json_memes_page["likes"],
@@ -100,15 +102,19 @@ page_data = (json_memes_page["id"], json_memes_page["likes"],
 # print('-----------')
 
 #extract post data
-post_url = create_post_url(current_memes_page, APP_ID, APP_SECRET)
+# extracted_time=extractTime(page_name)
+for values in extractTime(page_name):
+	extracted_time=values['latest_meme_time']
+
+print extracted_time
+
+post_url = create_post_url(current_memes_page, APP_ID, APP_SECRET,extracted_time.split(" ")[0])
 
 json_postdata = render_to_json(post_url)
 
 
 
 json_fbposts = json_postdata['data']
-
-# Logic for pagination of posts from Graph API
 # complete_posts=[]
 # count=0;
 # while(True):
@@ -140,7 +146,7 @@ for post in json_fbposts:
 		post_data=render_to_json(post_url)
 		print post['id']
 		posts_data=build_data_structure(post_data)
-		print post_data
+		print posts_data
 		if checkpostexists(post['id'])==0:
 			db.posts.insert(posts_data)
 			# db.poststatistics.insert(posts_data['stats'])
