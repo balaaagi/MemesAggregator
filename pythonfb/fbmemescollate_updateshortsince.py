@@ -134,26 +134,30 @@ json_fbposts = json_postdata['data']
 #         break
 
 # print complete_posts
-latest_post_time=json_fbposts[0]['updated_time']
-latest_post_time=latest_post_time[0:latest_post_time.index('+')]
-latest_post_time=latest_post_time.replace('T',' ')
-db.postutility.insert({"page_name":page_name,"latest_meme_time":latest_post_time});
-for post in json_fbposts:
-	if post['type']=='photo':
-		data={}
-		stats={}
-		post_url=create_single_post_url(graph_url+post['id'],APP_ID,APP_SECRET)
-		post_data=render_to_json(post_url)
-		print post['id']
-		posts_data=build_data_structure(post_data)
-		print posts_data
-		if checkpostexists(post['id'])==0:
-			db.posts.insert(posts_data)
-			# db.poststatistics.insert(posts_data['stats'])
-			
-		else:
-			db.posts.update({"post_id":post['id']},{'$set':{'share_count':post_data['shares']['count']}})
-			# db.poststatistics.update({"post_id":post['id']},{'$set':{'memes_share_count':post_data['shares']['count']}})
+if len(json_fbposts)>0:
+	latest_post_time=json_fbposts[0]['updated_time']
+	latest_post_time=latest_post_time[0:latest_post_time.index('+')]
+	latest_post_time=latest_post_time.replace('T',' ')
+	db.postutility.insert({"page_name":page_name,"latest_meme_time":latest_post_time});
+	for post in json_fbposts:
+		if post['type']=='photo':
+			data={}
+			stats={}
+			post_url=create_single_post_url(graph_url+post['id'],APP_ID,APP_SECRET)
+			post_data=render_to_json(post_url)
+			print post['id']
+			posts_data=build_data_structure(post_data)
+			print posts_data
+			if checkpostexists(post['id'])==0:
+				db.posts.insert(posts_data)
+				# db.poststatistics.insert(posts_data['stats'])
+				
+			else:
+				db.posts.update({"post_id":post['id']},{'$set':{'share_count':post_data['shares']['count']}})
+				# db.poststatistics.update({"post_id":post['id']},{'$set':{'memes_share_count':post_data['shares']['count']}})
+else:
+	print "Nothing to Update in this Run!!!!"
+
 			
 		
 		
