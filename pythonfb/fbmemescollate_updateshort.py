@@ -83,71 +83,73 @@ APP_ID =configs[1]
 memes_pages=['kaatupoochi007','hackathontrolls','TrollFootballTamil','OfficialTrollBollywood','tctv1','memeschennai','TamilTroll']
 graph_url="https://graph.facebook.com/"
 
-
 # MongoDB Connection
 client=MongoClient('labs.balaaagi.me', 27017)
-# Connecting to DataBase
+	# Connecting to DataBase
 db=client.memesaggregate
 
-page_name='kaatupoochi007'
-current_memes_page=graph_url + page_name
 
-json_memes_page=render_to_json(current_memes_page)
-page_data = (json_memes_page["id"], json_memes_page["likes"],
-                     json_memes_page["talking_about_count"],
-                     json_memes_page["username"])
-# print page_data
-# print('-----------')
+for memes_page_name in memes_pages:
+	print memes_page_name
+	page_name=memes_page_name
+	current_memes_page=graph_url + page_name
 
-#extract post data
-post_url = create_post_url(current_memes_page, APP_ID, APP_SECRET)
+	json_memes_page=render_to_json(current_memes_page)
+	page_data = (json_memes_page["id"], json_memes_page["likes"],
+	                     json_memes_page["talking_about_count"],
+	                     json_memes_page["username"])
+	# print page_data
+	# print('-----------')
 
-json_postdata = render_to_json(post_url)
+	#extract post data
+	post_url = create_post_url(current_memes_page, APP_ID, APP_SECRET)
+
+	json_postdata = render_to_json(post_url)
 
 
 
-json_fbposts = json_postdata['data']
+	json_fbposts = json_postdata['data']
 
-# Logic for pagination of posts from Graph API
-# complete_posts=[]
-# count=0;
-# while(True):
-#     try:
-#         for post in json_postdata['data']:
-#         	count=count+1
-#         	complete_posts.append(post)
-        	
-#         if(count>30):
-#         	break
-        	
-#         # Attempt to make a request to the next page of data, if it exists.
-#         json_postdata=requests.get(json_postdata['paging']['next']).json()
-#     except KeyError:
-#         # When there are no more pages (['paging']['next']), break from the
-#         # loop and end the script.
-#         break
+	# Logic for pagination of posts from Graph API
+	# complete_posts=[]
+	# count=0;
+	# while(True):
+	#     try:
+	#         for post in json_postdata['data']:
+	#         	count=count+1
+	#         	complete_posts.append(post)
+	        	
+	#         if(count>30):
+	#         	break
+	        	
+	#         # Attempt to make a request to the next page of data, if it exists.
+	#         json_postdata=requests.get(json_postdata['paging']['next']).json()
+	#     except KeyError:
+	#         # When there are no more pages (['paging']['next']), break from the
+	#         # loop and end the script.
+	#         break
 
-# print complete_posts
-latest_post_time=json_fbposts[0]['updated_time']
-latest_post_time=latest_post_time[0:latest_post_time.index('+')]
-latest_post_time=latest_post_time.replace('T',' ')
-db.postutility.insert({"page_name":page_name,"latest_meme_time":latest_post_time});
-for post in json_fbposts:
-	if post['type']=='photo':
-		data={}
-		stats={}
-		post_url=create_single_post_url(graph_url+post['id'],APP_ID,APP_SECRET)
-		post_data=render_to_json(post_url)
-		print post['id']
-		posts_data=build_data_structure(post_data)
-		print post_data
-		if checkpostexists(post['id'])==0:
-			db.posts.insert(posts_data)
-			# db.poststatistics.insert(posts_data['stats'])
-			
-		else:
-			db.posts.update({"post_id":post['id']},{'$set':{'share_count':post_data['shares']['count']}})
-			# db.poststatistics.update({"post_id":post['id']},{'$set':{'memes_share_count':post_data['shares']['count']}})
+	# print complete_posts
+	latest_post_time=json_fbposts[0]['updated_time']
+	latest_post_time=latest_post_time[0:latest_post_time.index('+')]
+	latest_post_time=latest_post_time.replace('T',' ')
+	db.postutility.insert({"page_name":page_name,"latest_meme_time":latest_post_time});
+	for post in json_fbposts:
+		if post['type']=='photo':
+			data={}
+			stats={}
+			post_url=create_single_post_url(graph_url+post['id'],APP_ID,APP_SECRET)
+			post_data=render_to_json(post_url)
+			print post['id']
+			posts_data=build_data_structure(post_data)
+			print post_data
+			if checkpostexists(post['id'])==0:
+				db.posts.insert(posts_data)
+				# db.poststatistics.insert(posts_data['stats'])
+				
+			else:
+				db.posts.update({"post_id":post['id']},{'$set':{'share_count':post_data['shares']['count']}})
+				# db.poststatistics.update({"post_id":post['id']},{'$set':{'memes_share_count':post_data['shares']['count']}})
 			
 		
 		
